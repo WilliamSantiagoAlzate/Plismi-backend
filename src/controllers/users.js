@@ -22,7 +22,7 @@ usersCtrl.signinUsers = async (req, res) => {
                 let token = jwt.sign(payload, process.env.SECRET_KEY, {
                     expiresIn: 1440
                 })
-                res.send(token)
+                res.send([token, user._id])
             } else {
                 res.send('The password do not match')
             }
@@ -47,6 +47,28 @@ usersCtrl.createUser = async (req, res) => {
         res.send("ok");
     }
 };
+
+usersCtrl.getUserData = async (req, res) => {
+    User.findOne({
+        _id: req.params.id
+    })
+    .then(user => {
+        const userData = {
+            name: user.name,
+            age: user.age,
+            phoneNumber: user.phoneNumber,
+            email: user.email
+        }
+        if (userData) {
+            res.send(userData)
+        } else {
+            res.send('No user data')
+        }
+    })
+    .catch(err => {
+        res.send('error: ' + err)
+    })
+}
 
 // usersCtrl.deleteUser = async (req, res) => {
 //     const { id } = req.params;
